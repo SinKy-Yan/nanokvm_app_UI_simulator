@@ -1,38 +1,39 @@
-# Framebuffer Script Simulator
+# 帧缓冲 UI 模拟器
 
-This program is a graphical simulator designed to run Python scripts that were originally intended for a direct-write framebuffer display (like `/dev/fb0`). It uses Pygame to create a desktop window and render the output of these scripts, allowing for development and testing in a standard desktop environment.
+本目录提供一个基于 Pygame 的模拟器，用于在桌面环境调试原本需要直接写 `/dev/fb0` 的 Python 脚本。通过猴子补丁替换脚本中的 `RGB565Display`，在窗口中动态渲染设备 UI，便于开发与验证。
 
-## Features
+## 功能特性
 
-- **Monkey Patching**: Dynamically replaces the hardware-specific display class (`RGB565Display`) from the target script with a Pygame-based simulation class at runtime.
-- **Configurable Timeout**: Can be set to automatically exit after a certain number of seconds, which is useful for automated testing.
-- **Rotated Display**: The output is rotated 90 degrees clockwise to a landscape orientation.
+- **Display 替换**：自动继承并替换硬件版 `RGB565Display`，复用现有绘制逻辑。
+- **可选超时**：支持 `--timeout` 参数，便于自动化测试时按需退出。
+- **方向匹配**：默认旋转输出，模拟与设备一致的屏幕朝向。
 
-## How to Use
+## 使用方法
 
-1.  **Activate the Virtual Environment**:
-    All dependencies are located in the `nv` virtual environment. Activate it first.
-    ```bash
-    source nv/bin/activate
-    ```
+1. **激活虚拟环境**
 
-2.  **Run the Simulator**:
-    Execute `simulator.py`, passing the path to the target script you want to simulate as the first argument.
+   ```bash
+   cd simulator_app
+   source nv/bin/activate
+   ```
 
-    **Syntax**:
-    ```bash
-    python simulator.py <path_to_script> [--timeout <seconds>]
-    ```
+2. **运行模拟器**
 
-    **Examples**:
+   ```bash
+   # 基本语法
+   python simulator.py <目标脚本路径> [--timeout 秒数]
 
-    - To run a script indefinitely:
-      ```bash
-      # Make sure you are in the parent directory of simulator_app
-      python simulator_app/simulator.py coin.py
-      ```
+   # 示例：在父目录运行 clash 监视器，保持窗口常驻
+   python simulator_app/simulator.py clash/main.py
 
-    - To run a script and have it automatically close after 10 seconds:
-      ```bash
-      python simulator_app/simulator.py conway.py --timeout 10
-      ```
+   # 示例：调试 coin.py，并在 10 秒后自动退出
+   python simulator_app/simulator.py coin.py --timeout 10
+   ```
+
+3. **退出虚拟环境**
+
+   ```bash
+   deactivate
+   ```
+
+如需调整旋转方向或缩放比例，可在 `simulator.py` 内直接修改相关常量。
